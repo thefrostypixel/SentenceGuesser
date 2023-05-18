@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Sentence Guesser</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter");
+      body {
+        margin: 0;
+        background-color: #222;
+        color: #EEE;
+        font-family: "Inter";
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      #options, #game {
+        width: min(100vw, 800px);
+        margin: 50vh auto 0 auto;
+        transform: translateY(-50%);
+        text-align: center;
+      }
+      span {
+        display: block;
+        padding: 15px 0 5px 0;
+      }
+      .number-option {
+        width: 25%;
+        height: 40px;
+        background-color: #333;
+        border-radius: 15px;
+        font-size: 20px;
+        margin: auto;
+      }
+      .number-option-button {
+        width: 25%;
+        height: 100%;
+        background-color: #555;
+        color: #EEE;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 20px;
+      }
+      .number-display {
+        display: inline-block;
+        width: 50%;
+        text-align: center;
+      }
+      .select-option {
+        width: fit-content;
+        height: 40px;
+        background-color: #333;
+        border-radius: 15px;
+        font-size: 20px;
+        margin: auto;
+      }
+      .select-option-button, .selected-option-button {
+        width: 80px;
+        height: 100%;
+        background-color: #333;
+        color: #EEE;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 20px;
+      }
+      .selected-option-button {
+        background-color: #555;
+      }
+      :focus-visible {
+        border: none;
+        outline: none;
+        background-color: #777;
+      }
+      .select-option-button:focus-visible {
+        background-color: #444;
+      }
+      .button, .player-button {
+        width: fit-content;
+        height: 50px;
+        background-color: #555;
+        color: #EEE;
+        margin: 30px auto 0 auto;
+        align-self: center;
+        padding: 0 30px;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 20px;
+      }
+      .player-button {
+        padding: 0 20px;
+      }
+      #letters {
+        display: flex;
+        width: fit-content;
+        padding: 0 8px;
+        align-items: center;
+        justify-content: center;
+        background-color: #333;
+        border-radius: 15px;
+        margin: 30px auto 0 auto;
+        height: 50px;
+        font-size: 20px;
+      }
+      .letter {
+        padding: 0 10px;
+      }
+    </style>
+    <script>
+      function getRandomCharacter() {
+        var popularityWeights = {"A": 6.516, "B": 1.886, "C": 0.703, "D": 3.062, "E": 17.404, "F": 1.656, "G": 3.009, "H": 4.577,
+          "I": 7.003, "J": 0.268, "K": 1.417, "L": 3.437, "M": 2.534, "N": 9.776, "O": 2.594, "P": 0.670, "Q": 0.018,
+          "R": 7.003, "S": 7.273, "T": 6.154, "U": 4.166, "V": 0.846, "W": 1.921, "X": 0.034, "Y": 0.039, "Z": 1.134};
+        var randomWeight = Math.random() * Object.values(popularityWeights).reduce((sum, weight) => sum + weight, 0);
+        var currentWeight = 0;
+        for (var char in popularityWeights) {
+          currentWeight += popularityWeights[char];
+          if (randomWeight <= currentWeight) {
+            return char;
+          }
+        }
+      }
+      function getRandomPunctuation() {
+        const popularityWeights = {".": 4.855, "?": 1.055, "!": 0.936};
+        const totalWeight = Object.values(popularityWeights).reduce((sum, weight) => sum + weight, 0);
+        const randomWeight = Math.random() * totalWeight;
+        let currentWeight = 0;
+        for (const punctuation in popularityWeights) {
+          currentWeight += popularityWeights[punctuation];
+          if (randomWeight <= currentWeight) {
+            return punctuation;
+          }
+        }
+      }
+      function generate() {
+        var length = Math.floor(Math.random() * (Number(document.getElementById("max-words").innerHTML) - Number(document.getElementById("min-words").innerHTML) + 1) + Number(document.getElementById("min-words").innerHTML));
+        document.getElementById("letters").innerHTML = "";
+        for (var i = 0; i < length; i++) {
+          document.getElementById("letters").innerHTML += "<a class='letter'>" + getRandomCharacter() + "</a>";
+        }
+        if (document.getElementById("punctuation-on").className == "selected-option-button") {
+          document.getElementById("letters").innerHTML += "<a class='letter'>" + getRandomPunctuation() + "</a>";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="options">
+      <span>
+        Geringste Zahl der Wörter:
+      </span>
+      <div class="number-option">
+        <button class="number-option-button" onclick="document.getElementById('min-words').innerHTML = Math.max(Number(document.getElementById('min-words').innerHTML) - 1, 3);">-</button><a class="number-display" id="min-words">3</a><button class="number-option-button" onclick="document.getElementById('min-words').innerHTML = Math.min(Number(document.getElementById('min-words').innerHTML) + 1, 15); if (Number(document.getElementById('min-words').innerHTML) > Number(document.getElementById('max-words').innerHTML)) {document.getElementById('max-words').innerHTML = document.getElementById('min-words').innerHTML;}">+</button>
+      </div>
+      <span>
+        Höchste Zahl der Wörter:
+      </span>
+      <div class="number-option">
+        <button class="number-option-button" onclick="document.getElementById('max-words').innerHTML = Math.max(Number(document.getElementById('max-words').innerHTML) - 1, 3); if (Number(document.getElementById('max-words').innerHTML) < Number(document.getElementById('min-words').innerHTML)) {document.getElementById('min-words').innerHTML = document.getElementById('max-words').innerHTML;}">-</button><a class="number-display" id="max-words">5</a><button class="number-option-button" onclick="document.getElementById('max-words').innerHTML = Math.min(Number(document.getElementById('max-words').innerHTML) + 1, 15);">+</button>
+      </div>
+      <span>
+        Satzzeichen:
+      </span>
+      <div class="select-option">
+        <button class="selected-option-button" id="punctuation-off" onclick="document.getElementById('punctuation-off').className = 'selected-option-button'; document.getElementById('punctuation-on').className = 'select-option-button';">Aus</button><button class="select-option-button" id="punctuation-on" onclick="document.getElementById('punctuation-off').className = 'select-option-button'; document.getElementById('punctuation-on').className = 'selected-option-button';">An</button>
+      </div>
+      <button class="button" id="start-button" onclick="document.getElementById('red-button').innerHTML = 0; document.getElementById('green-button').innerHTML = 0; document.getElementById('blue-button').innerHTML = 0; document.getElementById('yellow-button').innerHTML = 0; document.getElementById('options').hidden = true; document.getElementById('game').hidden = false; generate();">STARTEN</button>
+    </div>
+    <div id="game" hidden>
+      <button class="button" id="settings-button" onclick="document.getElementById('options').hidden = false; document.getElementById('game').hidden = true; generate();">EINSTELLUNGEN</button>
+      <div id="letters">
+      </div>
+      <div id="players">
+        <button class="player-button" id="red-button" style="background-color: #A00;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+        <button class="player-button" id="green-button" style="background-color: #090;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+        <button class="player-button" id="blue-button" style="background-color: #06A;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+        <button class="player-button" id="yellow-button" style="background-color: #B90;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+      </div>
+      <button class="button" id="settings-button" style="margin-top: 5px;" onclick="generate();">ÜBERSPRINGEN</button>
+    </div>
+  </body>
+</html>
+ 
