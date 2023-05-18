@@ -92,7 +92,7 @@
       .player-button {
         padding: 0 20px;
       }
-      #letters {
+      .letters {
         display: flex;
         width: fit-content;
         padding: 0 8px;
@@ -103,6 +103,9 @@
         margin: 30px auto 0 auto;
         height: 50px;
         font-size: 20px;
+      }
+      #letters-1 {
+        transform: rotate(180deg);
       }
       .letter {
         padding: 0 10px;
@@ -136,13 +139,15 @@
       }
       function generate() {
         var length = Math.floor(Math.random() * (Number(document.getElementById("max-words").innerHTML) - Number(document.getElementById("min-words").innerHTML) + 1) + Number(document.getElementById("min-words").innerHTML));
-        document.getElementById("letters").innerHTML = "";
+        var letters = "";
         for (var i = 0; i < length; i++) {
-          document.getElementById("letters").innerHTML += "<a class='letter'>" + getRandomCharacter() + "</a>";
+          letters += "<a class='letter'>" + getRandomCharacter() + "</a>";
         }
         if (document.getElementById("punctuation-on").className == "selected-option-button") {
-          document.getElementById("letters").innerHTML += "<a class='letter'>" + getRandomPunctuation() + "</a>";
+          letters += "<a class='letter'>" + getRandomPunctuation() + "</a>";
         }
+        document.getElementById("letters-1").innerHTML = letters;
+        document.getElementById("letters-2").innerHTML = letters;
       }
     </script>
   </head>
@@ -170,7 +175,9 @@
     </div>
     <div id="game" hidden>
       <button class="button" id="settings-button" onclick="document.getElementById('options').hidden = false; document.getElementById('game').hidden = true; generate();">EINSTELLUNGEN</button>
-      <div id="letters">
+      <div id="letters-1" class="letters">
+      </div>
+      <div id="letters-2" class="letters">
       </div>
       <div id="players">
         <button class="player-button" id="red-button" style="background-color: #A00;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
