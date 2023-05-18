@@ -76,7 +76,7 @@
       .select-option-button:focus-visible {
         background-color: #444;
       }
-      .button, .player-button {
+      .button, #players * {
         width: fit-content;
         height: 50px;
         background-color: #555;
@@ -89,33 +89,32 @@
         cursor: pointer;
         font-size: 20px;
       }
-      .player-button {
+      #players * {
         padding: 0 20px;
+        background-color: var(--player-color);
+      }
+      .selected-player {
+        box-shadow: 0 0 4px 4px var(--player-color);
       }
       .letters {
         display: flex;
         width: fit-content;
-        padding: 0 8px;
+        padding: 12px 8px 12px 14px;
         align-items: center;
         justify-content: center;
         background-color: #333;
-        border-radius: 15px;
-        margin: 30px auto 0 auto;
-        height: 50px;
+        border-radius: 20px;
+        margin: 20px auto -10px auto;
+        border: 5px solid #222;
         font-size: 20px;
-      }
-      #letters-1 {
-        transform: rotate(180deg);
-      }
-      .letter {
-        padding: 0 10px;
+        letter-spacing: 6px;
       }
     </style>
     <script>
       function getRandomCharacter() {
-        var popularityWeights = {"A": 6.516, "B": 1.886, "C": 0.703, "D": 3.062, "E": 17.404, "F": 1.656, "G": 3.009, "H": 4.577,
-          "I": 7.003, "J": 0.268, "K": 1.417, "L": 3.437, "M": 2.534, "N": 9.776, "O": 2.594, "P": 0.670, "Q": 0.018,
-          "R": 7.003, "S": 7.273, "T": 6.154, "U": 4.166, "V": 0.846, "W": 1.921, "X": 0.034, "Y": 0.039, "Z": 1.134};
+        var popularityWeights = {"A": 6.516, "Ä": 0.512, "B": 1.886, "C": 2.732, "D": 5.076, "E": 16.396, "F": 1.656, "G": 3.009, "H": 4.577,
+        "I": 6.550, "J": 0.268, "K": 1.417, "L": 3.437, "M": 2.534, "N": 9.776, "O": 2.594, "Ö": 0.443, "P": 0.670, "Q": 0.018,
+        "R": 7.003, "S": 7.270,  "T": 6.154, "U": 4.166, "Ü": 0.995, "V": 1.417, "W": 1.007, "X": 0.037, "Y": 0.039, "Z": 1.134};
         var randomWeight = Math.random() * Object.values(popularityWeights).reduce((sum, weight) => sum + weight, 0);
         var currentWeight = 0;
         for (var char in popularityWeights) {
@@ -141,13 +140,37 @@
         var length = Math.floor(Math.random() * (Number(document.getElementById("max-words").innerHTML) - Number(document.getElementById("min-words").innerHTML) + 1) + Number(document.getElementById("min-words").innerHTML));
         var letters = "";
         for (var i = 0; i < length; i++) {
-          letters += "<a class='letter'>" + getRandomCharacter() + "</a>";
+          letters += " " + getRandomCharacter();
         }
         if (document.getElementById("punctuation-on").className == "selected-option-button") {
-          letters += "<a class='letter'>" + getRandomPunctuation() + "</a>";
+          letters += " " + getRandomPunctuation();
         }
         document.getElementById("letters-1").innerHTML = letters;
         document.getElementById("letters-2").innerHTML = letters;
+        var player = Math.floor(Math.random() * (Number(document.getElementById("player-count").innerHTML))) + (document.getElementById("random-player-on").className == "selected-option-button" ? 1 : 7);
+        document.getElementById("red-button").className = player == 1 ? "selected-player" : "";
+        document.getElementById("green-button").className = player == 2 ? "selected-player" : "";
+        document.getElementById("blue-button").className = player == 3 ? "selected-player" : "";
+        document.getElementById("yellow-button").className = player == 4 ? "selected-player" : "";
+        document.getElementById("aqua-button").className = player == 5 ? "selected-player" : "";
+        document.getElementById("purple-button").className = player == 6 ? "selected-player" : "";
+      }
+      function start() {
+        var playerCount = Number(document.getElementById("player-count").innerHTML);
+        document.getElementById("red-button").innerHTML = 0;
+        document.getElementById("green-button").hidden = playerCount <= 1;
+        document.getElementById("green-button").innerHTML = 0;
+        document.getElementById("blue-button").hidden = playerCount <= 2;
+        document.getElementById("blue-button").innerHTML = 0;
+        document.getElementById("yellow-button").hidden = playerCount <= 3;
+        document.getElementById("yellow-button").innerHTML = 0;
+        document.getElementById("aqua-button").hidden = playerCount <= 4;
+        document.getElementById("aqua-button").innerHTML = 0;
+        document.getElementById("purple-button").hidden = playerCount <= 5;
+        document.getElementById("purple-button").innerHTML = 0;
+        document.getElementById("options").hidden = true;
+        document.getElementById("game").hidden = false;
+        generate();
       }
     </script>
   </head>
@@ -171,19 +194,33 @@
       <div class="select-option">
         <button class="selected-option-button" id="punctuation-off" onclick="document.getElementById('punctuation-off').className = 'selected-option-button'; document.getElementById('punctuation-on').className = 'select-option-button';">Aus</button><button class="select-option-button" id="punctuation-on" onclick="document.getElementById('punctuation-off').className = 'select-option-button'; document.getElementById('punctuation-on').className = 'selected-option-button';">An</button>
       </div>
-      <button class="button" id="start-button" onclick="document.getElementById('red-button').innerHTML = 0; document.getElementById('green-button').innerHTML = 0; document.getElementById('blue-button').innerHTML = 0; document.getElementById('yellow-button').innerHTML = 0; document.getElementById('options').hidden = true; document.getElementById('game').hidden = false; generate();">STARTEN</button>
+      <span>
+        Anzahl der Spieler:
+      </span>
+      <div class="number-option">
+        <button class="number-option-button" onclick="document.getElementById('player-count').innerHTML = Math.max(Number(document.getElementById('player-count').innerHTML) - 1, 1);">-</button><a class="number-display" id="player-count">3</a><button class="number-option-button" onclick="document.getElementById('player-count').innerHTML = Math.min(Number(document.getElementById('player-count').innerHTML) + 1, 6);">+</button>
+      </div>
+      <span>
+        Zufälligen Spieler wählen:
+      </span>
+      <div class="select-option">
+        <button class="selected-option-button" id="random-player-off" onclick="document.getElementById('random-player-off').className = 'selected-option-button'; document.getElementById('random-player-on').className = 'select-option-button';">Aus</button><button class="select-option-button" id="random-player-on" onclick="document.getElementById('random-player-off').className = 'select-option-button'; document.getElementById('random-player-on').className = 'selected-option-button';">An</button>
+      </div>
+      <button class="button" id="start-button" onclick="start();">STARTEN</button>
     </div>
     <div id="game" hidden>
       <button class="button" id="settings-button" onclick="document.getElementById('options').hidden = false; document.getElementById('game').hidden = true; generate();">EINSTELLUNGEN</button>
-      <div id="letters-1" class="letters">
+      <div id="letters-1" class="letters" style="transform: rotate(180deg);">
       </div>
       <div id="letters-2" class="letters">
       </div>
       <div id="players">
-        <button class="player-button" id="red-button" style="background-color: #A00;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
-        <button class="player-button" id="green-button" style="background-color: #090;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
-        <button class="player-button" id="blue-button" style="background-color: #06A;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
-        <button class="player-button" id="yellow-button" style="background-color: #B90;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+        <button id="red-button" style="--player-color: #A00;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+        <button id="green-button" style="--player-color: #090;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+        <button id="blue-button" style="--player-color: #06A;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+        <button id="yellow-button" style="--player-color: #B90;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+        <button id="aqua-button" style="--player-color: #0A9;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
+        <button id="purple-button" style="--player-color: #A09;" onclick="this.innerHTML = Number(this.innerHTML) + 1; generate();">0</button>
       </div>
       <button class="button" id="settings-button" style="margin-top: 5px;" onclick="generate();">ÜBERSPRINGEN</button>
     </div>
